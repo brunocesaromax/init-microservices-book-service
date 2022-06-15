@@ -19,3 +19,7 @@ spring:
     url: jdbc:postgresql://localhost:54320/book_service
     user: root
     password: admin123
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+    default-property-inclusion: non_null
