@@ -5,7 +5,7 @@ spring:
     name: book-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:54320/book_service
+    url: jdbc:postgresql://localhost:54321/book_service
     username: root
     password: admin123
   jpa:
@@ -16,7 +16,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
-    url: jdbc:postgresql://localhost:54320/book_service
+    url: jdbc:postgresql://localhost:54321/book_service
     user: root
     password: admin123
   jackson:

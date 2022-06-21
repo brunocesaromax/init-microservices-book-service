@@ -1,0 +1,16 @@
+version: '3.4'
+services:
+  db:
+    image: postgres:12.5
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "admin123"
+    ports:
+      - "54321:5432"
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-net
+networks:
+  microservices-net:
+    driver: bridge
