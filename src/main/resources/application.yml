@@ -19,6 +19,9 @@ spring:
     url: jdbc:postgresql://localhost:54321/book_service
     user: root
     password: admin123
+  sleuth:
+    sampler:
+      probability: 1.0 # Ambientes de dev: logar 1.0 -> 100%, prod: 0.05 -> 5%
   jackson:
     serialization:
       fail-on-empty-beans: false
