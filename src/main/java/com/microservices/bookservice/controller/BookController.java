@@ -73,13 +73,15 @@ public class BookController {
         book.setEnvironment("Book port: " + port + "\n Cambio port: " + cambio.getEnvironment());
         book.setPrice(cambio.getConvertedValue());
 
-        logger.info("Alimentando cache");
+        logger.info("Alimentando cache:");
         cache.put(book.getId(), book);
 
         return ResponseEntity.ok(book);
     }
 
     public ResponseEntity<?> getBookFallBack(Long bookId, String currency, Throwable e) {
+        logger.info("Buscando no cache:");
+
         if (cache.containsKey(bookId)) {
             return ResponseEntity.ok(cache.get(bookId));
         } else {
