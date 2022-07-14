@@ -46,10 +46,15 @@ resilience4j:
         enable-exponential-backoff: true
   ratelimiter:
     instances:
-      default:
+      foo-bar:
         limit-for-period: 2
         limit-refresh-period: 10s
   bulkhead:
     instances:
-      default:
+      foo-bar:
         max-concurrent-calls: 10
+  circuitbreaker:
+    instances:
+      getBookCB:
+        minimum-number-of-calls: 4
+        sliding-window-size: 8
