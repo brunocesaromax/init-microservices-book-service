@@ -26,6 +26,13 @@ spring:
     serialization:
       fail-on-empty-beans: false
     default-property-inclusion: non_null
+  main:
+    allow-bean-definition-overriding: true
+  cache:
+    type: jcache
+    jcache:
+      provider: com.hazelcast.cache.impl.HazelcastServerCachingProvider
+      config: classpath:hazelcast.xml
 springdoc:
   show-actuator: true
   api-docs:
@@ -49,6 +56,9 @@ resilience4j:
       foo-bar:
         limit-for-period: 2
         limit-refresh-period: 10s
+#      getBookRL:
+#        limit-for-period: 1
+#        limit-refresh-period: 10s
   bulkhead:
     instances:
       foo-bar:
@@ -58,3 +68,15 @@ resilience4j:
       getBookCB:
         minimum-number-of-calls: 4
         sliding-window-size: 8
+
+#Referência: https://www.youtube.com/watch?v=S8pTyk6WYqs&list=PLZTjHbp2Y7809w3PLM0UE_LgQq6vk49q0&index=2
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rateLimitMessage
+      url: .*
+      rate-limits:
+        - bandwidths:
+            - capacity: 5
+              time: 2
+              unit: minutes

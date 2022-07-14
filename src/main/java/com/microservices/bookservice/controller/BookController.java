@@ -62,6 +62,7 @@ public class BookController {
     // Usando OpenFeign
     @Operation(summary = "Find a specific book by your ID")
     @CircuitBreaker(name = "getBookCB", fallbackMethod = "getBookFallBack")
+//    @RateLimiter(name = "getBookRL")
     @GetMapping(value = "/{id}/{currency}")
     public ResponseEntity<?> getBook(@PathVariable Long id, @PathVariable String currency) {
         var book = repository.findById(id)
