@@ -56,9 +56,9 @@ resilience4j:
       foo-bar:
         limit-for-period: 2
         limit-refresh-period: 10s
-#      getBookRL:
-#        limit-for-period: 1
-#        limit-refresh-period: 10s
+  #      getBookRL:
+  #        limit-for-period: 1
+  #        limit-refresh-period: 10s
   bulkhead:
     instances:
       foo-bar:
@@ -75,8 +75,24 @@ bucket4j:
   filters:
     - cache-name: rateLimitMessage
       url: .*
+      filter-order: 100 # Deve ser executado após o filtro do Spring Security, caso esteja usando módulo de segurança na aplicação
       rate-limits:
-        - bandwidths:
-            - capacity: 5
-              time: 2
+        - execute-condition: "@userAuthenticatedMockService.isAuthenticated()"
+          expression: "@userAuthenticatedMockService.getUsername()"
+          bandwidths:
+            - capacity: 10
+              time: 1
               unit: minutes
+
+        - execute-condition: "@userNotAuthenticatedMockService.isNotAuthenticated()"
+          expression: "getRemoteAddr()" # Retorna o IP address
+          bandwidths:
+            - capacity: 5
+              time: 1
+              unit: minutes
+
+#        - bandwidths:
+#            - capacity: 5
+#              time: 2
+#              unit: minutes
+
