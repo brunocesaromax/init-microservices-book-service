@@ -95,4 +95,16 @@ bucket4j:
 #            - capacity: 5
 #              time: 2
 #              unit: minutes
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: 'health, metrics, prometheus'
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    prometheus:
+      enabled: true
 

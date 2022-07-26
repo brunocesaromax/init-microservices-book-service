@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 public class UserAuthenticatedMockService {
 
     public boolean isAuthenticated() {
-//        return true;
-        return false;
+        return true;
+//        return false;
     }
 
     public String getUsername() {

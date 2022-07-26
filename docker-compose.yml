@@ -1,4 +1,8 @@
 version: '3.4'
+
+volumes:
+  prometheus_data:
+
 services:
   db:
     image: postgres:12.5
@@ -11,6 +15,15 @@ services:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - microservices-net
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./docker-config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - microservices-net
+
 networks:
   microservices-net:
     driver: bridge
