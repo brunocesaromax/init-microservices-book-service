@@ -2,6 +2,7 @@ version: '3.4'
 
 volumes:
   prometheus_data:
+  grafana_data:
 
 services:
   db:
@@ -21,6 +22,16 @@ services:
     volumes:
       - ./docker-config/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - microservices-net
+
+  # Referência: https://www.youtube.com/watch?v=K_EI1SxVQ5Q&list=PLZTjHbp2Y7809w3PLM0UE_LgQq6vk49q0&index=3
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
     networks:
       - microservices-net
 
