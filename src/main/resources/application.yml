@@ -109,6 +109,11 @@ management:
   metrics:
     enable:
       executor: false
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
   endpoint:
     health:
       enabled: true
@@ -125,3 +130,8 @@ management:
       enabled: true
     prometheus:
       enabled: true
+
+info:
+  application:
+    name: ${spring.application.name}
+    description: API de livros
