@@ -15,6 +15,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        generate_statistics: true
   flyway:
     url: jdbc:postgresql://localhost:54321/book_service
     user: root
@@ -100,14 +101,19 @@ management:
     enabled-by-default: false
     web:
       exposure:
-        include: 'health, metrics, prometheus'
+        include: 'metrics, health, info, auditevents, prometheus' # Para adicionar todas metricas (Não usar para prod), utilizar: include: '*'
+  metrics:
+    enable:
+      executor: false
   endpoint:
     health:
       enabled: true
       show-details: always
+    metrics:
+      enabled: true
+    info:
+      enabled: true
+    auditevents: # Registra eventos de login e outros, ideal para prod
+      enabled: true
     prometheus:
       enabled: true
-
-
-
-
