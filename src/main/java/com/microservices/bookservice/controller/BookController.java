@@ -1,8 +1,7 @@
 package com.microservices.bookservice.controller;
 
-import com.microservices.bookservice.model.Book;
 import com.microservices.bookservice.proxy.CambioProxy;
-import com.microservices.bookservice.repository.BookRepository;
+import com.microservices.bookservice.service.BookService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,10 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @Tag(name = "Book endpoint")
 @RestController
 @RequestMapping("book-service")
@@ -27,13 +22,11 @@ public class BookController {
 
     private final Logger logger = LoggerFactory.getLogger(BookController.class);
 
-    private final Map<Long, Book> cache = new HashMap<>();
-
     @Autowired
     private Environment environment;
 
     @Autowired
-    private BookRepository repository;
+    private BookService service;
 
     @Autowired
     private CambioProxy cambioProxy;
@@ -65,8 +58,7 @@ public class BookController {
 //    @RateLimiter(name = "getBookRL")
     @GetMapping(value = "/{id}/{currency}")
     public ResponseEntity<?> getBook(@PathVariable Long id, @PathVariable String currency) {
-        var book = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not Found"));
+        var book = service.findById(id);
 
         var cambioResponse = cambioProxy.getCambio(book.getPrice(), "USD", currency);
         var cambio = cambioResponse.getBody();
@@ -76,7 +68,7 @@ public class BookController {
         book.setPrice(cambio.getConvertedValue());
 
         logger.info("Alimentando cache:");
-        cache.put(book.getId(), book);
+        service.addInCache(book);
 
         return ResponseEntity.ok(book);
     }
@@ -84,14 +76,7 @@ public class BookController {
     public ResponseEntity<?> getBookFallBack(Long bookId, String currency, Throwable e) {
         logger.info("Buscando no cache:");
 
-        if (cache.containsKey(bookId)) {
-            return ResponseEntity.ok(cache.get(bookId));
-        } else {
-            Map<String, Object> availableBooks = new LinkedHashMap<>();
-            availableBooks.put("message", "Livros disponíveis no momento:");
-            availableBooks.put("books", cache.values());
-
-            return ResponseEntity.ok(availableBooks);
-        }
+        Object object = service.findInCache(bookId);
+        return ResponseEntity.ok(object);
     }
 }
