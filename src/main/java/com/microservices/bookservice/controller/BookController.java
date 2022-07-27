@@ -3,6 +3,8 @@ package com.microservices.bookservice.controller;
 import com.microservices.bookservice.proxy.CambioProxy;
 import com.microservices.bookservice.service.BookService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -56,6 +58,8 @@ public class BookController {
     @Operation(summary = "Find a specific book by your ID")
     @CircuitBreaker(name = "getBookCB", fallbackMethod = "getBookFallBack")
 //    @RateLimiter(name = "getBookRL")
+    @Counted(value = "message.count.getBook")
+    @Timed(value = "message.timed.getBook", longTask = true)
     @GetMapping(value = "/{id}/{currency}")
     public ResponseEntity<?> getBook(@PathVariable Long id, @PathVariable String currency) {
         var book = service.findById(id);
