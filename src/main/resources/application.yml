@@ -3,6 +3,18 @@ server:
 spring:
   application:
     name: book-service
+  boot: # Mal funcionamento
+    admin:
+      client:
+        url: http://localhost:1111
+        username: admin
+        password: 123
+        instance:
+          prefer-ip: true
+          metadata:
+            management:
+              port: 8150
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:54321/book_service
@@ -96,7 +108,13 @@ bucket4j:
 #            - capacity: 5
 #              time: 2
 #              unit: minutes
+
+#Referência: https://www.youtube.com/watch?v=9dXxm3ff4oI&t=68s
+#Parte de segurança não implementada para o actuator
 management:
+  # Porta separada para o servidor do actuator, demanda mais recurso porém garante mais segurança
+  server:
+    port: 8150
   endpoints:
     enabled-by-default: false
     web:

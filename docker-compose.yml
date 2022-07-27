@@ -13,6 +13,13 @@ services:
     networks:
       - microservices-net
 
+  admin:
+    image: slydeveloper/spring-boot-admin:1.3
+    volumes:
+      - ./docker-config/admin-application.yml:/opt/spring-boot-admin-docker/application-docker.yml
+    ports:
+      - "1111:1111"
+
 networks:
   microservices-net:
     driver: bridge
