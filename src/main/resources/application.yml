@@ -105,7 +105,7 @@ management:
 #        health: 'saude'
 #        metrics: 'metricas'
       exposure:
-        include: 'metrics, health, info, auditevents, prometheus' # Para adicionar todas metricas (Não usar para prod), utilizar: include: '*'
+        include: 'metrics, health, info, auditevents, loggers, books, prometheus' # Para adicionar todas metricas (Não usar para prod), utilizar: include: '*'
   metrics:
     enable:
       executor: false
@@ -120,6 +120,8 @@ management:
     info:
       enabled: true
     auditevents: # Registra eventos de login e outros, ideal para prod
+      enabled: true
+    loggers:
       enabled: true
     prometheus:
       enabled: true
