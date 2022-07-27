@@ -100,6 +100,10 @@ management:
   endpoints:
     enabled-by-default: false
     web:
+#      base-path: '/manager' //Sobrescreve path raiz
+#      path-mapping:        //Sobrescreve outros paths
+#        health: 'saude'
+#        metrics: 'metricas'
       exposure:
         include: 'metrics, health, info, auditevents, prometheus' # Para adicionar todas metricas (Não usar para prod), utilizar: include: '*'
   metrics:
@@ -109,6 +113,8 @@ management:
     health:
       enabled: true
       show-details: always
+#      show-details: when_authorized
+#      roles: 'ADMIN'
     metrics:
       enabled: true
     info:
