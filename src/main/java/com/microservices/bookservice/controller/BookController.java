@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
 
     private final Logger logger = LoggerFactory.getLogger(BookController.class);
+    private final String routingKey = "book-service.v1.get-book";
 
     @Autowired
     private Environment environment;
@@ -32,6 +35,9 @@ public class BookController {
 
     @Autowired
     private CambioProxy cambioProxy;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     // Usando RestTemplate
     /*@GetMapping(value = "/{id}/{currency}")
@@ -73,6 +79,9 @@ public class BookController {
 
         logger.info("Alimentando cache:");
         service.addInCache(book);
+
+        Message message = new Message(book.getId().toString().getBytes());
+        rabbitTemplate.send(routingKey, message);
 
         return ResponseEntity.ok(book);
     }
