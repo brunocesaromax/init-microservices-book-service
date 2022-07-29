@@ -12,8 +12,13 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Bean
-    public Queue queue() {
+    public Queue getBookQueue() {
         return new Queue("book-service.v1.get-book");
+    }
+
+    @Bean
+    public Queue createBookQueue() {
+        return new Queue("book-service.v1.create-book");
     }
 
     @Bean

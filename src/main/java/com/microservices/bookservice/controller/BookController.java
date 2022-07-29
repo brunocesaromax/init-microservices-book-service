@@ -1,5 +1,7 @@
 package com.microservices.bookservice.controller;
 
+import com.microservices.bookservice.dto.BookDTO;
+import com.microservices.bookservice.model.Book;
 import com.microservices.bookservice.proxy.CambioProxy;
 import com.microservices.bookservice.service.BookService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -13,9 +15,12 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
 
     private final Logger logger = LoggerFactory.getLogger(BookController.class);
-    private final String routingKey = "book-service.v1.get-book";
+
+    private final String routingKeyGetBookQueue = "book-service.v1.get-book";
+    private final String routingKeyCreateBookQueue = "book-service.v1.create-book";
 
     @Autowired
     private Environment environment;
@@ -81,7 +88,7 @@ public class BookController {
         service.addInCache(book);
 
         Message message = new Message(book.getId().toString().getBytes());
-        rabbitTemplate.send(routingKey, message);
+        rabbitTemplate.send(routingKeyGetBookQueue, message);
 
         return ResponseEntity.ok(book);
     }
@@ -91,5 +98,15 @@ public class BookController {
 
         Object object = service.findInCache(bookId);
         return ResponseEntity.ok(object);
+    }
+
+    @PostMapping
+    public ResponseEntity<Book> create(@RequestBody BookDTO bookDTO) {
+        Book book = service.create(bookDTO);
+
+        Message message = new Message(book.getId().toString().getBytes());
+        rabbitTemplate.send(routingKeyCreateBookQueue, message);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(book);
     }
 }
