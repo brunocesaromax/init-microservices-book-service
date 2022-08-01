@@ -104,8 +104,7 @@ public class BookController {
     public ResponseEntity<Book> create(@RequestBody BookDTO bookDTO) {
         Book book = service.create(bookDTO);
 
-        Message message = new Message(book.getId().toString().getBytes());
-        rabbitTemplate.send(routingKeyCreateBookQueue, message);
+        rabbitTemplate.convertAndSend(routingKeyCreateBookQueue, book.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(book);
     }
