@@ -32,8 +32,8 @@ public class BookController {
 
     private final Logger logger = LoggerFactory.getLogger(BookController.class);
 
+    private final String routingKeyCreateBookExchange = "book-service.v1.create-book";
     private final String routingKeyGetBookQueue = "book-service.v1.get-book";
-    private final String routingKeyCreateBookQueue = "book-service.v1.create-book";
 
     @Autowired
     private Environment environment;
@@ -106,7 +106,7 @@ public class BookController {
         Book book = service.create(bookDTO);
 
         BookRetrieve bookRetrieve = new BookRetrieve(book.getId(), book.getPrice(), book.getTitle());
-        rabbitTemplate.convertAndSend(routingKeyCreateBookQueue, bookRetrieve);
+        rabbitTemplate.convertAndSend(routingKeyCreateBookExchange, "", bookRetrieve);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(book);
     }
