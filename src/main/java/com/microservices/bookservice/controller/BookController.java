@@ -1,6 +1,7 @@
 package com.microservices.bookservice.controller;
 
 import com.microservices.bookservice.dto.BookDTO;
+import com.microservices.bookservice.dto.BookRetrieve;
 import com.microservices.bookservice.model.Book;
 import com.microservices.bookservice.proxy.CambioProxy;
 import com.microservices.bookservice.service.BookService;
@@ -104,7 +105,8 @@ public class BookController {
     public ResponseEntity<Book> create(@RequestBody BookDTO bookDTO) {
         Book book = service.create(bookDTO);
 
-        rabbitTemplate.convertAndSend(routingKeyCreateBookQueue, book.getId());
+        BookRetrieve bookRetrieve = new BookRetrieve(book.getId(), book.getPrice(), book.getTitle());
+        rabbitTemplate.convertAndSend(routingKeyCreateBookQueue, bookRetrieve);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(book);
     }
