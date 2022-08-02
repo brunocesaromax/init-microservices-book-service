@@ -21,6 +21,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public FanoutExchange fanoutExchangeDLX(){
+        return new FanoutExchange("book-service.v1.create-book.dlx");
+    }
+
+    @Bean
     public Queue getBookQueue() {
         return new Queue("book-service.v1.get-book");
     }
